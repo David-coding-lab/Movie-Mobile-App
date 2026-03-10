@@ -31,6 +31,9 @@ module.exports = {
         beVietnamLight: ["BeVietnamPro-Light"],
         beVietnamThin: ["BeVietnamPro-Thin"],
       },
+      width: {
+        banner: "358px",
+      },
     },
   },
   plugins: [],
