@@ -23,7 +23,14 @@ module.exports = {
 
         textDark: "#64748B",
       },
-      fontFamily: {},
+      fontFamily: {
+        beVietnamPro: "BeVietnamPro-Black",
+        beVietnamProRegular: "BeVietnamPro-Regular",
+        beVietnamProSemiBold: "BeVietnamPro-SemiBold",
+        beVietnamProMedium: "BeVietnamPro-Medium",
+        beVietnamProLight: "BeVietnamPro-Light",
+        beVietnamProThin: "BeVietnamPro-Thin",
+      },
     },
   },
   plugins: [],
