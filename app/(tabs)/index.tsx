@@ -12,9 +12,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import getMovies from "../utils/getMovies";
-
-console.log(`loading Movies ${getMovies("popular")}`);
 
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("Popular Movies");
