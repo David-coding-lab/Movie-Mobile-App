@@ -1,8 +1,11 @@
+import Movie from "@/types/movies";
+import getMovies from "@/utils/getMovies";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { navigate } from "expo-router/build/global-state/routing";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   ScrollView,
@@ -15,74 +18,78 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [activeFilter, setActiveFilter] = useState("Popular Movies");
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [newMovies, setNewMovies] = useState<Movie[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [dummyMovieData, setDummyMovieData] = useState([
-    {
-      name: "stranger things",
-      movieType: "action, sci-fy",
-      cast: "paul walker, johnny matthew, steve rogers",
-      datePublished: "13-mar-2002",
-      preview: "https;//linktomvie",
-    },
-    {
-      name: "interstellar Two",
-      cast: "paul walker, johnny matthew, steve rogers",
-      datePublished: "13-mar-2002",
-      preview: "https;//linktomvie",
-      movieType: "action, sci-fy",
-    },
-    {
-      name: "wake up dead man",
-      cast: "paul walker, johnny matthew, steve rogers",
-      datePublished: "13-mar-2002",
-      preview: "https;//linktomvie",
-      movieType: "action, sci-fy",
-    },
-    {
-      name: "lilo and stich",
-      cast: "paul walker, johnny matthew, steve rogers",
-      datePublished: "13-mar-2002",
-      preview: "https;//linktomvie",
-      movieType: "action, sci-fy, adventure",
-    },
-  ]);
+  const ImageBaseURL = process.env.EXPO_PUBLIC_TMDB_IMAGE_BASE_URL;
+
   const heroButtons = [
     {
       name: "Popular Movies",
-      active: true,
+      category: "popular",
     },
     {
       name: "New Releases Movies",
-      active: false,
+      category: "new",
     },
     {
       name: "Upcoming ",
-      active: false,
+      category: "upcoming",
     },
     {
       name: "Most Rated Movies",
       toUrl: "./most-rated",
-      active: false,
+      category: "random",
     },
   ];
-  function makeActive(buttonName: string) {
-    for (let i = 0; i < heroButtons.length; i++) {
-      const element = heroButtons[i];
-      if (element.name === buttonName) {
-        element.active = true;
-        setActiveFilter(element.name);
 
-        if (element.active) {
-          element.active = false;
-        }
-      }
-    }
+  function makeActive(buttonName: string) {
+    setActiveFilter(buttonName);
   }
+
   const heroButtonStyles = {
     active:
       "px-6 py-3 rounded-3xl items-center bg-accent shadow-violet-700/50 shadow-md h-fit",
     inactive: "px-6 py-3 rounded-3xl items-center bg-primaryLight2 h-fit",
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const button = heroButtons.find((b) => b.name === activeFilter);
+      const category = (button?.category || "popular") as
+        | "popular"
+        | "new"
+        | "upcoming"
+        | "random";
+
+      const data = await getMovies(category);
+
+      if (data) {
+        setMovies(shuffleArray([...data]));
+      }
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, [activeFilter]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const category = "new";
+      const data = await getMovies(category);
+
+      if (data) {
+        setNewMovies(() =>
+          shuffleArray([data[0], data[1], data[2], data[3], data[4], data[5]]),
+        );
+      }
+    };
+
+    loadData();
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <ScrollView>
@@ -143,7 +150,7 @@ export default function Index() {
                   makeActive(button.name);
                 }}
                 className={
-                  button.active === true
+                  button.name === activeFilter
                     ? heroButtonStyles.active
                     : heroButtonStyles.inactive
                 }
@@ -162,32 +169,49 @@ export default function Index() {
           </Text>
           <Text className="text-accent font-beVietnamRegular">See all</Text>
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerClassName="px-4 flex-row gap-3"
-          className="pt-5"
-        >
-          {dummyMovieData.map((movie, index) => {
-            return (
-              <View key={index}>
-                <View className="h-60 bg-primaryLight3 w-52 rounded-xl">
-                  <ImageBackground
-                    className="flex-1"
-                    source={{ uri: movie.preview }}
-                  />
-                </View>
 
-                <Text className="mt-3 mb-1 text-white text-base font-beVietnamSemiBold">
-                  {movie.name}
-                </Text>
-                <Text className="text-textDark font-beVietnamRegular">
-                  {movie.movieType}
-                </Text>
-              </View>
-            );
-          })}
-        </ScrollView>
+        {isLoading ? (
+          <View className="h-72 justify-center items-center">
+            <ActivityIndicator size="large" color="#7500EB" />
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="px-4 flex-row gap-3"
+            className="pt-5"
+          >
+            {movies.map((movie, index) => {
+              return (
+                <View key={index}>
+                  <View className="h-60 bg-primaryLight3 w-52 rounded-xl">
+                    <ImageBackground
+                      className="flex-1"
+                      source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
+                      resizeMode="cover"
+                      imageStyle={{ borderRadius: 12 }} // Apply radius to the actual image
+                    />
+                  </View>
+
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    className=" w-52 mt-3 mb-1 text-white text-base font-beVietnamSemiBold"
+                  >
+                    {movie.original_title}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    className="w-52 text-textDark font-beVietnamRegular"
+                  >
+                    {movie.title}
+                  </Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+        )}
 
         <View className="flex-1 px-4 mt-8">
           <Text className="text-lg text-white font-beVietnamSemiBold">
@@ -196,7 +220,7 @@ export default function Index() {
         </View>
 
         <View className="px-4 gap-2 mt-6">
-          {dummyMovieData.map((movie, index) => {
+          {newMovies.map((movie, index) => {
             return (
               <View
                 key={index}
@@ -204,20 +228,23 @@ export default function Index() {
               >
                 <View className="h-20 w-20 bg-primaryLight2 rounded-2xl">
                   <Image
-                    className="h-32 w-32 rounded-xl"
-                    source={{ uri: "sds" }}
+                    className="w-full h-full rounded-2xl" // Use w-full and h-full
+                    source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
+                    resizeMode="cover" // This ensures the image fills the 20x20 box
                   />
                 </View>
                 <View className="pl-3 flex-1">
                   <Text className="text-white font-beVietnamSemiBold text-base">
-                    {movie.name}
+                    {movie.original_title}
                   </Text>
-                  <Text className="text-textDark text-xs">Action, 1h 55m</Text>
+                  <Text className="text-textDark text-xs">
+                    {movie.release_date}
+                  </Text>
                 </View>
                 <View className="flex-row items-center gap-1 justify-self-end">
                   <FontAwesome name="star" size={24} className="color-accent" />
                   <Text className="font-beVietnamRegular color-accent">
-                    7.2
+                    {movie.vote_average.toFixed(1)}
                   </Text>
                 </View>
               </View>
@@ -228,3 +255,7 @@ export default function Index() {
     </SafeAreaView>
   );
 }
+
+const shuffleArray = (array: any[]) => {
+  return array.sort(() => Math.random() - 0.5);
+};
