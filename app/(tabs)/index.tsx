@@ -1,8 +1,10 @@
+import MovieCategory from "@/types/MovieCatrgory";
 import Movie from "@/types/movies";
 import getMovies from "@/utils/getMovies";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { navigate } from "expo-router/build/global-state/routing";
+import { DrawerActions } from "@react-navigation/native";
+import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,14 +19,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const [activeFilter, setActiveFilter] = useState("Popular Movies");
+  const router = useRouter();
+  const navigation = useNavigation();
+  const [activeFilter, setActiveFilter] = useState<MovieCategory>("popular");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [newMovies, setNewMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const ImageBaseURL = process.env.EXPO_PUBLIC_TMDB_IMAGE_BASE_URL;
 
-  const heroButtons = [
+  const heroButtons: { name: string; category: MovieCategory }[] = [
     {
       name: "Popular Movies",
       category: "popular",
@@ -39,31 +43,23 @@ export default function Index() {
     },
     {
       name: "Most Rated Movies",
-      toUrl: "./most-rated",
       category: "random",
     },
   ];
 
-  function makeActive(buttonName: string) {
-    setActiveFilter(buttonName);
-  }
-
-  const heroButtonStyles = {
-    active:
-      "px-6 py-3 rounded-3xl items-center bg-accent shadow-violet-700/50 shadow-md h-fit",
-    inactive: "px-6 py-3 rounded-3xl items-center bg-primaryLight2 h-fit",
+  const handleFilterClick = (category: MovieCategory) => {
+    setActiveFilter(category);
+    // router.push({
+    //   pathname: "/search",
+    //   params: { filter: category },
+    // });
   };
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       const button = heroButtons.find((b) => b.name === activeFilter);
-      const category = (button?.category || "popular") as
-        | "popular"
-        | "new"
-        | "upcoming"
-        | "random";
-
+      const category = (button?.category || "popular") as MovieCategory;
       const data = await getMovies(category);
 
       if (data) {
@@ -77,7 +73,7 @@ export default function Index() {
 
   useEffect(() => {
     const loadData = async () => {
-      const category = "new";
+      const category = "new" as MovieCategory;
       const data = await getMovies(category);
 
       if (data) {
@@ -95,7 +91,9 @@ export default function Index() {
       <ScrollView>
         {/* Heading */}
         <View className="flex-row h-24 pt-4 items-center justify-between px-4">
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          >
             <View className="w-14 h-14 items-center justify-center rounded-full bg-primaryLight2">
               <Entypo name="menu" size={24} color="#7500EB" />
             </View>
@@ -103,7 +101,7 @@ export default function Index() {
           <Text className="font-beVietnamSemiBold text-textLight1 text-2xl">
             Movie Jam
           </Text>
-          <TouchableWithoutFeedback onPress={() => navigate("./search")}>
+          <TouchableWithoutFeedback onPress={() => router.push("/search")}>
             <View className="w-14 h-14 items-center justify-center rounded-full bg-primaryLight2">
               <FontAwesome name="search" size={24} color="#7500EB" />
             </View>
@@ -112,28 +110,37 @@ export default function Index() {
 
         {/* Hero Section */}
         <View className="bg-primaryLight3 justify-center w-11/12 h-56 self-center rounded-2xl mt-4 overflow-hidden">
-          <ImageBackground
-            source={{
-              uri: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            }}
-            resizeMode="cover"
-            imageStyle={{ borderRadius: 12 }}
-            className="flex-1 justify-center px-4"
+          <TouchableWithoutFeedback
+            onPress={() => router.push("/search?filter=new")}
           >
-            <View className="absolute inset-0 bg-black/50" />
-            <View className="w-24 h-8 rounded-xl items-center justify-center bg-accent">
-              <Text className="text-textLight1 text-xs font-beVietnamSemiBold">
-                FEATURED
-              </Text>
-            </View>
+            <ImageBackground
+              source={{
+                uri: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+              }}
+              resizeMode="cover"
+              imageStyle={{ borderRadius: 12 }}
+              className="flex-1 justify-center px-4"
+            >
+              <View className="absolute inset-0 bg-black/50" />
+              <View className="w-24 h-8 rounded-xl items-center justify-center  mb-2 bg-accent">
+                <Text className="text-textLight1 text-xs font-beVietnamSemiBold">
+                  FEATURED
+                </Text>
+              </View>
 
-            <Text className="truncate text-2xl font-beVietnamMedium color-white">
-              The Latest Of 2026
-            </Text>
-            <Text className="mt-2 text-textLight2 text-base font-beVietnamMedium">
-              view now <Entypo name="chevron-right" size={16} color="#CBD5E1" />
-            </Text>
-          </ImageBackground>
+              <Text className="truncate text-2xl font-beVietnamSemiBold color-white">
+                The Latest Of 2026
+              </Text>
+              <TouchableWithoutFeedback
+                onPress={() => router.push("/search?filter=new")}
+              >
+                <Text className="mt-2 text-textLight2 text-base font-beVietnamMedium">
+                  view now{" "}
+                  <Entypo name="chevron-right" size={16} color="#CBD5E1" />
+                </Text>
+              </TouchableWithoutFeedback>
+            </ImageBackground>
+          </TouchableWithoutFeedback>
         </View>
 
         <ScrollView
@@ -142,32 +149,32 @@ export default function Index() {
           className="w-full max-h-12 h-fit mt-8"
           contentContainerClassName="px-4 flex-row gap-3"
         >
-          {heroButtons.map((button) => {
-            return (
-              <TouchableOpacity
-                key={button.name}
-                onPress={() => {
-                  makeActive(button.name);
-                }}
-                className={
-                  button.name === activeFilter
-                    ? heroButtonStyles.active
-                    : heroButtonStyles.inactive
-                }
-              >
-                <Text className="text-textLight1 font-beVietnamRegular">
-                  {button.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+          {heroButtons.map((button) => (
+            <TouchableOpacity
+              key={button.category}
+              onPress={() => handleFilterClick(button.category)}
+              className={"px-6 py-3 rounded-3xl items-center  h-fit"}
+              style={{
+                backgroundColor:
+                  activeFilter === button.category ? "#7500EB" : "#251535",
+              }}
+            >
+              <Text className="text-textLight1 font-beVietnamRegular">
+                {button.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
 
         <View className="flex-1 max-h-12 items-start justify-between mt-6 flex-row px-6">
-          <Text className="text-lg text-white font-beVietnamSemiBold">
+          <Text className="text-lg capitalize text-white font-beVietnamSemiBold">
             {activeFilter}
           </Text>
-          <Text className="text-accent font-beVietnamRegular">See all</Text>
+          <TouchableWithoutFeedback
+            onPress={() => router.push(`/search?filter=${activeFilter}`)}
+          >
+            <Text className="text-accent font-beVietnamRegular">See all</Text>
+          </TouchableWithoutFeedback>
         </View>
 
         {isLoading ? (
@@ -242,7 +249,7 @@ export default function Index() {
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1 justify-self-end">
-                  <FontAwesome name="star" size={24} className="color-accent" />
+                  <FontAwesome name="star-o" size={24} color="#7500EB" />
                   <Text className="font-beVietnamRegular color-accent">
                     {movie.vote_average.toFixed(1)}
                   </Text>

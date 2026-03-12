@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Drawer } from "expo-router/drawer";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "./globals.css";
@@ -27,9 +27,21 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="movie/[id]" options={{ headerShown: false }} />
-    </Stack>
+    <Drawer
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: "#251535",
+          width: 280,
+        },
+        drawerActiveTintColor: "#7500EB",
+        drawerInactiveTintColor: "#94A3B8",
+      }}
+    >
+      <Drawer.Screen
+        name="(tabs)"
+        options={{ drawerLabel: "Home", title: "Home" }}
+      />
+    </Drawer>
   );
 }
