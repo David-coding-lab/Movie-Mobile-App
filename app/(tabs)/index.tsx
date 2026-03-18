@@ -190,31 +190,41 @@ export default function Index() {
           >
             {movies.map((movie, index) => {
               return (
-                <View key={index}>
-                  <View className="h-60 bg-primaryLight3 w-52 rounded-xl">
-                    <ImageBackground
-                      className="flex-1"
-                      source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
-                      resizeMode="cover"
-                      imageStyle={{ borderRadius: 12 }} // Apply radius to the actual image
-                    />
-                  </View>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    router.push({
+                      pathname: `../movies/${movie.id}`,
+                      params: { title: movie.original_title },
+                    })
+                  }
+                >
+                  <View>
+                    <View className="h-60 bg-primaryLight3 w-52 rounded-xl">
+                      <ImageBackground
+                        className="flex-1"
+                        source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
+                        resizeMode="cover"
+                        imageStyle={{ borderRadius: 12 }} // Apply radius to the actual image
+                      />
+                    </View>
 
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    className=" w-52 mt-3 mb-1 text-white text-base font-beVietnamSemiBold"
-                  >
-                    {movie.original_title}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    className="w-52 text-textDark font-beVietnamRegular"
-                  >
-                    {movie.title}
-                  </Text>
-                </View>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      className=" w-52 mt-3 mb-1 text-white text-base font-beVietnamSemiBold"
+                    >
+                      {movie.original_title}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      className="w-52 text-textDark font-beVietnamRegular"
+                    >
+                      {movie.title}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               );
             })}
           </ScrollView>
@@ -229,32 +239,39 @@ export default function Index() {
         <View className="px-4 gap-2 mt-6">
           {newMovies.map((movie, index) => {
             return (
-              <View
+              <TouchableOpacity
                 key={index}
-                className="flex-1 h-28 p-4 rounded-3xl bg-primaryLight1 items-center flex-row"
+                onPress={() =>
+                  router.push({
+                    pathname: `../movies/${movie.id}`,
+                    params: { title: movie.original_title },
+                  })
+                }
               >
-                <View className="h-20 w-20 bg-primaryLight2 rounded-2xl">
-                  <Image
-                    className="w-full h-full rounded-2xl" // Use w-full and h-full
-                    source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
-                    resizeMode="cover" // This ensures the image fills the 20x20 box
-                  />
+                <View className="flex-1 h-28 p-4 rounded-3xl bg-primaryLight1 items-center flex-row">
+                  <View className="h-20 w-20 bg-primaryLight2 rounded-2xl">
+                    <Image
+                      className="w-full h-full rounded-2xl" // Use w-full and h-full
+                      source={{ uri: `${ImageBaseURL}${movie.poster_path}` }}
+                      resizeMode="cover" // This ensures the image fills the 20x20 box
+                    />
+                  </View>
+                  <View className="pl-3 flex-1">
+                    <Text className="text-white font-beVietnamSemiBold text-base">
+                      {movie.original_title}
+                    </Text>
+                    <Text className="text-textDark text-xs">
+                      {movie.release_date}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center gap-1 justify-self-end">
+                    <FontAwesome name="star-o" size={24} color="#7500EB" />
+                    <Text className="font-beVietnamRegular color-accent">
+                      {movie.vote_average.toFixed(1)}
+                    </Text>
+                  </View>
                 </View>
-                <View className="pl-3 flex-1">
-                  <Text className="text-white font-beVietnamSemiBold text-base">
-                    {movie.original_title}
-                  </Text>
-                  <Text className="text-textDark text-xs">
-                    {movie.release_date}
-                  </Text>
-                </View>
-                <View className="flex-row items-center gap-1 justify-self-end">
-                  <FontAwesome name="star-o" size={24} color="#7500EB" />
-                  <Text className="font-beVietnamRegular color-accent">
-                    {movie.vote_average.toFixed(1)}
-                  </Text>
-                </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>

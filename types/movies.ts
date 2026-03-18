@@ -9,10 +9,20 @@ interface Movie {
   genre_ids: number[];
   adult: boolean;
   original_language: string;
-  original_title: "War of the Worlds";
+  original_title: string;
   popularity: number;
   video: boolean;
   vote_count: number;
 }
 
+interface MovieDetails extends Movie {
+  genres: { id: number; name: string }[];
+  runtime: number;
+  status: string;
+  tagline: string;
+  homepage: string;
+  imdb_id: string;
+}
+
+export type { Movie, MovieDetails };
 export default Movie;

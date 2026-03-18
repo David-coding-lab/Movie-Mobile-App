@@ -14,10 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#190F23",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/logo.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/logo.png"
       },
+      "package": "com.k_dave.moviejam",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -41,6 +40,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "cfe08bad-38e2-469a-afa3-fddb164b1c76"
+      }
     }
   }
 }

@@ -39,12 +39,14 @@ hooks/           # Custom React hooks (Theme, Color Scheme)
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/David-coding-lab/Movie-Mobile-App.git
    cd Movie-Mobile-App
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
@@ -60,9 +62,14 @@ hooks/           # Custom React hooks (Theme, Color Scheme)
 - **iOS:** Press `i` to open in the iOS simulator.
 - **Web:** Press `w` to open in a web browser.
 
+### Installing on local devices
+
+- https://expo.dev/accounts/k_dave/projects/Movie-Jam/builds/8b4af626-3667-4d10-9625-dc8552258b9a
+
 ## 📈 Learning Objectives
 
 This project was developed to master:
+
 - **Expo Router** and sophisticated navigation patterns.
 - **React Hooks** for state and side-effect management.
 - Custom **Theming** and responsive design in mobile.
@@ -74,4 +81,4 @@ This project is licensed under the MIT License.
 
 ---
 
-*Made with ❤️ for the love of cinema and code.*
+_Made with ❤️ for the love of cinema and code._
