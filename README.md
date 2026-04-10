@@ -64,7 +64,8 @@ hooks/           # Custom React hooks (Theme, Color Scheme)
 
 ### Installing on local devices
 
-- https://expo.dev/accounts/k_dave/projects/Movie-Jam/builds/8b4af626-3667-4d10-9625-dc8552258b9a
+- **Version 1** https://expo.dev/accounts/k_dave/projects/Movie-Jam/builds/8b4af626-3667-4d10-9625-dc8552258b9a
+- **Version 2** https://expo.dev/accounts/k_dave/projects/Movie-Jam/builds/ae5b8fbb-9b3e-4338-910d-9065d83f6384
 
 ## 📈 Learning Objectives
 
